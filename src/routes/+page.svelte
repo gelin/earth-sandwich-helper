@@ -34,14 +34,18 @@
 	<header>
 		<h1>🥪 Earth Sandwich Helper</h1>
 		<p class="coords">
-			Your location: {userLat.toFixed(4)}°, {userLng.toFixed(4)}° |
+			You: {userLat.toFixed(4)}°, {userLng.toFixed(4)}° |
 			Antipode: {antipodeLat.toFixed(4)}°, {antipodeLng.toFixed(4)}° |
 			Zoom: {zoom}
 		</p>
 	</header>
 	<div class="maps">
-		<MapView bind:lat={userLat} bind:lng={userLng} bind:zoom={zoom} label="Your Location" />
-		<MapView lat={antipodeLat} lng={antipodeLng} {zoom} label="Antipode" onmove={(aLat, aLng, z) => {
+		<MapView lat={userLat} lng={userLng} zoom={zoom} label="You" onmove={(uLat, uLng, z) => {
+			userLat = uLat;
+			userLng = uLng;
+			zoom = z;
+		}}/>
+		<MapView lat={antipodeLat} lng={antipodeLng} zoom={zoom} label="Antipode" onmove={(aLat, aLng, z) => {
 			userLat = -aLat;
 			userLng = aLng > 0 ? aLng - 180 : aLng + 180;
 			zoom = z;

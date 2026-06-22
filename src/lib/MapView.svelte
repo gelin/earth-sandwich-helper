@@ -3,9 +3,9 @@
 	import type { Map as LeafletMap } from 'leaflet';
 
 	let {
-		lat = $bindable(0),
-		lng = $bindable(0),
-		zoom = $bindable(3),
+		lat = 0,
+		lng = 0,
+		zoom = 3,
 		label = '',
 		onmove
 	}: {
@@ -17,9 +17,21 @@
 	} = $props();
 
 	let mapContainer: HTMLDivElement;
-	let map: LeafletMap | undefined;
-	let updatingFromProps = false;
-	let userInteracting = false;
+	let map: LeafletMap | undefined = $state(undefined);
+	let skipEvents = 0;
+
+	function emitPosition() {
+		if (!map || skipEvents > 0) return;
+		const center = map.getCenter();
+		const z = map.getZoom();
+		if (onmove) {
+			onmove(center.lat, center.lng, z);
+		} else {
+			lat = center.lat;
+			lng = center.lng;
+			zoom = z;
+		}
+	}
 
 	onMount(async () => {
 		const L = await import('leaflet');
@@ -30,26 +42,8 @@
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
 
-		map.on('movestart', () => {
-			if (!updatingFromProps) {
-				userInteracting = true;
-			}
-		});
-
-		map.on('moveend', () => {
-			if (userInteracting) {
-				const center = map!.getCenter();
-				const z = map!.getZoom();
-				if (onmove) {
-					onmove(center.lat, center.lng, z);
-				} else {
-					lat = center.lat;
-					lng = center.lng;
-					zoom = z;
-				}
-				userInteracting = false;
-			}
-		});
+		map.on('move', emitPosition);
+		map.on('zoomend', emitPosition);
 	});
 
 	$effect(() => {
@@ -64,9 +58,10 @@
 				Math.abs(currentCenter.lng - _lng) > 0.0001 ||
 				currentZoom !== _zoom
 			) {
-				updatingFromProps = true;
+				skipEvents++;
+				// console.log('setting view', label, _lat, _lng, _zoom);
 				map.setView([_lat, _lng], _zoom, { animate: false });
-				updatingFromProps = false;
+				skipEvents--;
 			}
 		}
 	});
