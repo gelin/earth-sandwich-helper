@@ -72,7 +72,7 @@
 </script>
 
 <div class="map-wrapper">
-	<div class="map-label">{label}</div>
+	<div class="map-label">{label}: {lat.toFixed(4)}°, {lng.toFixed(4)}°</div>
 	<div class="map-container" bind:this={mapContainer}></div>
 </div>
 

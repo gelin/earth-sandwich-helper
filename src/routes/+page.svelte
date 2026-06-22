@@ -33,11 +33,6 @@
 <div class="app">
 	<header>
 		<h1>🥪 Earth Sandwich Helper</h1>
-		<p class="coords">
-			You: {userLat.toFixed(4)}°, {userLng.toFixed(4)}° |
-			Antipode: {antipodeLat.toFixed(4)}°, {antipodeLng.toFixed(4)}° |
-			Zoom: {zoom}
-		</p>
 	</header>
 	<div class="maps">
 		<MapView lat={userLat} lng={userLng} zoom={zoom} label="You" onmove={(uLat, uLng, z) => {
@@ -70,12 +65,6 @@
 	header h1 {
 		margin: 0;
 		font-size: 1.4rem;
-	}
-
-	.coords {
-		margin: 4px 0 0;
-		font-size: 0.85rem;
-		opacity: 0.9;
 	}
 
 	.maps {
