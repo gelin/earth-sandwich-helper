@@ -1,32 +1,30 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { replaceState } from '$app/navigation';
 	import MapView from '$lib/MapView.svelte';
 
-	let userLat = $state(0);
-	let userLng = $state(0);
-	let zoom = $state(3);
+	let { data } = $props();
+
+	let userLat = $state(data.userLat);
+	let userLng = $state(data.userLng);
+	let zoom = $state(data.zoom);
 
 	let antipodeLat = $derived(-userLat);
 	let antipodeLng = $derived(userLng > 0 ? userLng - 180 : userLng + 180);
 
-	let locationLoaded = $state(false);
+	let urlTimer: ReturnType<typeof setTimeout> | undefined;
 
-	onMount(() => {
-		if ('geolocation' in navigator) {
-			navigator.geolocation.getCurrentPosition(
-				(position) => {
-					userLat = position.coords.latitude;
-					userLng = position.coords.longitude;
-					zoom = 10;
-					locationLoaded = true;
-				},
-				() => {
-					locationLoaded = true;
-				}
-			);
-		} else {
-			locationLoaded = true;
-		}
+	function updateUrl() {
+		const path = `/${userLat.toFixed(4)}/${userLng.toFixed(4)}/${zoom}`;
+		replaceState(path, {userLat, userLng, zoom});
+	}
+
+	$effect(() => {
+		// Access reactive values to track them
+		const _lat = userLat;
+		const _lng = userLng;
+		const _z = zoom;
+		clearTimeout(urlTimer);
+		urlTimer = setTimeout(updateUrl, 300);
 	});
 </script>
 
