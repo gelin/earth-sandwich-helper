@@ -4,9 +4,9 @@
 
 	let { data } = $props();
 
-	let userLat = $state(data.userLat);
-	let userLng = $state(data.userLng);
-	let zoom = $state(data.zoom);
+	let userLat = $derived(data.userLat);
+	let userLng = $derived(data.userLng);
+	let zoom = $derived(data.zoom);
 
 	let antipodeLat = $derived(-userLat);
 	let antipodeLng = $derived(userLng > 0 ? userLng - 180 : userLng + 180);
