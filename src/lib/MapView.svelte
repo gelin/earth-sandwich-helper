@@ -73,7 +73,15 @@
 
 <div class="map-wrapper">
 	<div class="map-label">{label}: {lat.toFixed(4)}°, {lng.toFixed(4)}°</div>
-	<div class="map-container" bind:this={mapContainer}></div>
+	<div class="map-area">
+		<div class="map-container" bind:this={mapContainer}></div>
+		<div class="crosshair">
+			<svg width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="red" stroke-width="2">
+				<line x1="40" y1="0" x2="40" y2="800" />
+				<line x1="0" y1="40" x2="80" y2="40" />
+			</svg>
+		</div>
+	</div>
 </div>
 
 <style>
@@ -82,6 +90,13 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 0;
+	}
+
+	.map-area {
+		flex: 1;
+		display: flex;
+		min-height: 0;
+		position: relative;
 	}
 
 	.map-label {
@@ -96,5 +111,14 @@
 	.map-container {
 		flex: 1;
 		min-height: 0;
+	}
+
+	.crosshair {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		pointer-events: none;
+		z-index: 1000;
 	}
 </style>
