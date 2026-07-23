@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  webapp:
+  build:
     name: Build Svelte SPA
     runs-on: ubuntu-latest
     steps:
@@ -33,21 +33,32 @@ jobs:
         run: |
           npm run build
 
-      - name: Archive build
-        run: |
-          zip -r earth-sandwich-helper.zip build/
-
-      - name: Upload artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v7
         with:
-          name: web-dist
-          path: earth-sandwich-helper.zip
+          name: earth-sandwich-helper
+          path: build/**
           if-no-files-found: error
 
-      - name: Attach to GitHub Release (on tag)
-        if: startsWith(github.ref, 'refs/tags/')
+  release:
+    name: Make GitHub release
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: earth-sandwich-helper
+          path: build
+
+      - name: Archive build
+        working-directory: build
+        run: |
+          zip -r earth-sandwich-helper.zip .
+
+      - name: Attach to GitHub release
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            earth-sandwich-helper.zip
+            build/earth-sandwich-helper.zip
           fail_on_unmatched_files: true
