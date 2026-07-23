@@ -35,19 +35,19 @@ jobs:
 
       - name: Archive build
         run: |
-          zip -r earch-sandwich-helper.zip build/
+          zip -r earth-sandwich-helper.zip build/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: web-dist
-          path: earch-sandwich-helper.zip
+          path: earth-sandwich-helper.zip
           if-no-files-found: error
 
       - name: Attach to GitHub Release (on tag)
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
-            earch-sandwich-helper.zip
+            earth-sandwich-helper.zip
           fail_on_unmatched_files: true
